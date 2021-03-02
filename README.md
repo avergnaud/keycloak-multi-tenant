@@ -53,6 +53,10 @@ Ici détailler le flux OAuth...
 
 ![PathBasedConfigResolver](./doc/keycloak_1.png?raw=true)
 
+***
+
 ![MultitenantKeycloakAuthenticationEntryPoint](./doc/keycloak_2.png?raw=true)
+
+***
 
 ![KeycloakConfigurationAdapter](./doc/keycloak_3.png?raw=true)
