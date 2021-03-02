@@ -1,10 +1,10 @@
-# Run
+# Install
 
-## Run keycloak
+## Install & conf keycloak
 ```
 docker container run --name=keycloak -p 8081:8080 -e KEYCLOAK_USER=admin -e KEYCLOAK_PASSWORD=admin jboss/keycloak
 ```
-Créer 2 realm dans Keycloak.
+Créer 2 realm dans Keycloak :
 * realm-1
 * realm-2
 
@@ -18,7 +18,7 @@ Créer 2 clients dans Keycloak :
 
 ![client2](./doc/client2.png?raw=true)
 
-Créer 2 realm dans Keycloak :
+Créer 2 users dans Keycloak :
 * realm-1, user adrien
 * realm-2, user benoit
 
@@ -31,6 +31,13 @@ Puis :
 adrien/adrien
 * http://localhost:8080/tenant/realm-2/protected-resource
 benoit/benoit
+
+# run
+
+## run keycloak
+```
+docker container start keycloak
+```
 
 ## run this app
 ```
