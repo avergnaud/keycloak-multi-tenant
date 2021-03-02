@@ -32,16 +32,16 @@ Créer 2 users dans Keycloak :
 ```
 docker container start keycloak
 ```
-Validation du fonctionnement multi tenant :
-* http://localhost:8080/tenant/realm-1/protected-resource
-adrien/adrien
-* http://localhost:8080/tenant/realm-2/protected-resource
-benoit/benoit
 
 ## run this app
 ```
 mvn spring-boot:run
 ```
+Validation du fonctionnement multi tenant :
+* http://localhost:8080/tenant/realm-1/protected-resource
+adrien/adrien
+* http://localhost:8080/tenant/realm-2/protected-resource
+benoit/benoit
 
 # Doc
 
