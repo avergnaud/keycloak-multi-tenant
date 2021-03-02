@@ -26,18 +26,17 @@ Créer 2 users dans Keycloak :
 
 ![benoit](./doc/benoit.png?raw=true)
 
-Puis :
-* http://localhost:8080/tenant/realm-1/protected-resource
-adrien/adrien
-* http://localhost:8080/tenant/realm-2/protected-resource
-benoit/benoit
-
 # run
 
 ## run keycloak
 ```
 docker container start keycloak
 ```
+Validation du fonctionnement multi tenant :
+* http://localhost:8080/tenant/realm-1/protected-resource
+adrien/adrien
+* http://localhost:8080/tenant/realm-2/protected-resource
+benoit/benoit
 
 ## run this app
 ```
