@@ -51,12 +51,24 @@ Ici détailler le flux OAuth...
 
 ## Classes
 
+Retourne un KeycloakDeployment en fonction du path.
+
+Charge :
+* soit realm-1-keycloak.json
+* soit realm-2-keycloak.json
+
 ![PathBasedConfigResolver](./doc/keycloak_1.png?raw=true)
 
 ***
 
+En fonction du path, définit une redirection :
+* soit /tenant/realm-1/sso/login
+* soit /tenant/realm-2/sso/login
+
 ![MultitenantKeycloakAuthenticationEntryPoint](./doc/keycloak_2.png?raw=true)
 
 ***
+
+Configuration sécurité :
 
 ![KeycloakConfigurationAdapter](./doc/keycloak_3.png?raw=true)
