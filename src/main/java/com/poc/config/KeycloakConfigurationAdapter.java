@@ -42,6 +42,7 @@ public class KeycloakConfigurationAdapter extends KeycloakWebSecurityConfigurerA
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         KeycloakAuthenticationProvider keycloakAuthenticationProvider = keycloakAuthenticationProvider();
+        /* https://www.keycloak.org/docs/latest/securing_apps/#naming-security-roles */
         SimpleAuthorityMapper soa = new SimpleAuthorityMapper();
         keycloakAuthenticationProvider.setGrantedAuthoritiesMapper(soa);
         auth.authenticationProvider(keycloakAuthenticationProvider);

@@ -6,7 +6,9 @@ import org.keycloak.KeycloakSecurityContext;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.keycloak.representations.AccessToken;
 import org.keycloak.representations.IDToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,8 +20,19 @@ public class ProtectedResourceController {
             "/tenant/realm-2/protected-resource"})
     public AccessToken listCatalogBranch1() {
 
-        KeycloakAuthenticationToken authentication = (KeycloakAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
-        final Principal principal = (Principal) authentication.getPrincipal();
+        Authentication authentication =
+                SecurityContextHolder
+                        .getContext()
+                        .getAuthentication();
+
+        KeycloakAuthenticationToken keycloakAuthentication = (KeycloakAuthenticationToken) authentication;
+
+        /*
+        OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
+        System.out.println(oauthToken.getPrincipal().getAttributes());
+         */
+
+        final Principal principal = (Principal) keycloakAuthentication.getPrincipal();
         AccessToken accessToken = null;
         if (principal instanceof KeycloakPrincipal) {
             KeycloakPrincipal<KeycloakSecurityContext> kPrincipal = (KeycloakPrincipal<KeycloakSecurityContext>) principal;
