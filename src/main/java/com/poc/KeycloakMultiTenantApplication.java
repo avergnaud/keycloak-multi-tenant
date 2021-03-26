@@ -22,18 +22,18 @@ public class KeycloakMultiTenantApplication {
         SpringApplication.run(KeycloakMultiTenantApplication.class, args);
     }
 
-
-    @Bean
-    @ConditionalOnMissingBean(UrlBasedConfigResolver.class)
-    public KeycloakConfigResolver keycloakConfigResolver() {
-        return new UrlBasedConfigResolver();
-    }
     /*
+        @Bean
+        @ConditionalOnMissingBean(UrlBasedConfigResolver.class)
+        public KeycloakConfigResolver keycloakConfigResolver() {
+            return new UrlBasedConfigResolver();
+        }
+        */
     @Bean
     @ConditionalOnMissingBean(HeaderBasedConfigResolver.class)
     public KeycloakConfigResolver keycloakConfigResolver() {
         return new HeaderBasedConfigResolver();
-    }*/
+    }
 
     @Bean
     public CommandLineRunner demo(CustomerRepository repository) {

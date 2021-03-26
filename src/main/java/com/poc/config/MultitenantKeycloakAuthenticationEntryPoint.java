@@ -20,7 +20,7 @@ public class MultitenantKeycloakAuthenticationEntryPoint extends KeycloakAuthent
     @Override
     protected void commenceLoginRedirect(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-
+/*
         String path = request.getRequestURI();
         int multitenantIndex = path.indexOf("tenant/");
         if (multitenantIndex == -1) {
@@ -30,15 +30,15 @@ public class MultitenantKeycloakAuthenticationEntryPoint extends KeycloakAuthent
         if (realm.contains("?")) {
             realm = realm.split("\\?")[0];
         }
+*/
 
-/*
         String host = request.getHeader("Host");
         String app = "app1", realm = "realm-1";
         if(host.startsWith("app2")) {
             app = "app2";
             realm = "realm-2";
         }
-        */
+
 
 
         String contextAwareLoginUri = request.getContextPath() + "/tenant/" + realm + DEFAULT_LOGIN_URI;
