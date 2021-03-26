@@ -1,7 +1,4 @@
-package com.poc.config;
-
-import java.io.InputStream;
-import java.util.concurrent.ConcurrentHashMap;
+package com.poc.config.resolvers;
 
 import org.keycloak.adapters.KeycloakConfigResolver;
 import org.keycloak.adapters.KeycloakDeployment;
@@ -9,7 +6,10 @@ import org.keycloak.adapters.KeycloakDeploymentBuilder;
 import org.keycloak.adapters.OIDCHttpFacade;
 import org.keycloak.representations.adapters.config.AdapterConfig;
 
-public class PathBasedConfigResolver implements KeycloakConfigResolver {
+import java.io.InputStream;
+import java.util.concurrent.ConcurrentHashMap;
+
+public class HeaderBasedConfigResolver implements KeycloakConfigResolver {
 
     private final ConcurrentHashMap<String, KeycloakDeployment> cache = new ConcurrentHashMap<>();
 
@@ -19,24 +19,22 @@ public class PathBasedConfigResolver implements KeycloakConfigResolver {
     @Override
     public KeycloakDeployment resolve(OIDCHttpFacade.Request request) {
 
-        String path = request.getURI();
-        int index = path.indexOf("tenant/");
-        if (index == -1) {
-            throw new IllegalStateException("Tenant not found");
+        String host = request.getHeader("Host");
+        String app = "app1", realm = "realm-1";
+        if(host.startsWith("app2")) {
+            app = "app2";
+            realm = "realm-2";
         }
-        String realm = path.substring(path.indexOf("tenant/")).split("/")[1];
-        if (realm.contains("?")) {
-            realm = realm.split("\\?")[0];
-        }
+
         if (!cache.containsKey(realm)) {
             InputStream is = getClass().getResourceAsStream("/" + realm + "-keycloak.json");
-            cache.put(realm, KeycloakDeploymentBuilder.build(is));
+            cache.put(app, KeycloakDeploymentBuilder.build(is));
         }
-        return cache.get(realm);
+        return cache.get(app);
     }
 
     static void setAdapterConfig(AdapterConfig adapterConfig) {
-        PathBasedConfigResolver.adapterConfig = adapterConfig;
+        HeaderBasedConfigResolver.adapterConfig = adapterConfig;
     }
 
 }

@@ -52,10 +52,15 @@ docker container start keycloak-multi
 ```
 mvn spring-boot:run
 ```
+Voir les données
+http://localhost:8080/h2-console/
+
 Validation du fonctionnement multi tenant :
 * http://localhost:8080/tenant/realm-1/protected-resource
+* http://app1:8080/protected-resource
 adrien/adrien
 * http://localhost:8080/tenant/realm-2/protected-resource
+* http://app2:8080/protected-resource
 benoit/benoit
 
 # Doc
@@ -118,7 +123,7 @@ design of the OAuth protocol the user will not be available on the connection be
 C'est le principe de OAuth : l'authentification est découplée de l'authorization. Au moment où l'application accède à 
 la _resource_, l'utilisateur propriétaire de la ressource n'intervient pas. Il a déjà préalablement donné son accord.
 
-## De OAuth 2.0 à OpenID Connect ?
+## De OAuth 2.0 à OpenID Connect
 
 On peut construire un protocole **d'authentification et d'identité** sur le protocole 
  OAuth 2.0 **d'authorisation et de délégation** [source](https://oauth.net/articles/authentication/)
@@ -160,6 +165,7 @@ au _Relying Party_
 
 Le _Identity Provider_ fournit toutes ces informations dans un ID Token.
 Le ID Token (carte d'identité ou passeport) contient un ensemble d'attributs relatifs à l'utilsateur : les _claims_
+Ces _claims_ sont les _consented user informations_
 
 Claims :
 * Subject
@@ -167,7 +173,20 @@ Claims :
 * Audience
 * Issue date
 * Expiration Date
+* ...
 
+Ces _claims_ sont regroupés en _scopes_.
+* (openid), profile, email, phone, address
+
+Le _authorization code_ flow de OpenID Connect est le même que le _authorization code_ flow de OAuth 2.0, avec un id-token en plus.
+* La requête initiale sur GET /authorize contient un **scope openid** : demande un id-token
+* La requête initiale sur GET /authorize peut contenir des scopes **profile**, **email** signifie que l'application cliente
+(_Relying Party_) requête l'accès au profile et à l'email de l'utilisateur
+
+A la fin du _authorization code flow_, le _identity provider_ (_authorization server_) renvoie un id-token en plus du access-token.
+L'application _relyin party_ (_client app_) valide le id-token et l'identité est vérifiée.
+
+* Pour obtenir les informations de profile et d'email, l'application envoie un GET /userinfo avec le header authorization Bearer access-token.
 
 Un adapter est une "librairie ++" pour un type d'application. Par exemple :
 * adapter OpenID Connect pour Spring Boot [source](https://www.keycloak.org/docs/latest/securing_apps/index.html#_spring_boot_adapter)

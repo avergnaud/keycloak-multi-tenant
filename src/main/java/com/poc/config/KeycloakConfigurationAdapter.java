@@ -117,7 +117,11 @@ public class KeycloakConfigurationAdapter extends KeycloakWebSecurityConfigurerA
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.sessionManagement()
+        http
+                /* pour http://localhost:8080/h2-console */
+                .headers().frameOptions().disable()
+                .and()
+                .sessionManagement()
                 .sessionAuthenticationStrategy(sessionAuthenticationStrategy())
                 .and().addFilterBefore(keycloakPreAuthActionsFilter(), LogoutFilter.class)
                 .addFilterBefore(keycloakAuthenticationProcessingFilter(), X509AuthenticationFilter.class).exceptionHandling()
