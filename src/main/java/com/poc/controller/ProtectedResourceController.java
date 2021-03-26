@@ -18,12 +18,14 @@ public class ProtectedResourceController {
     @Autowired
     CustomerRepository repository;
 
-    /*
+
     @GetMapping(value={
             "/tenant/realm-1/protected-resource",
             "/tenant/realm-2/protected-resource"})
-    */
+    /*
     @GetMapping("/protected-resource")
+
+     */
     public List<Customer> listCatalogBranch1() {
 
         Authentication authentication = SecurityContextHolder

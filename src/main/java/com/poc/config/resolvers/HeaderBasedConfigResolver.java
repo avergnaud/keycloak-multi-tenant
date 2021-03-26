@@ -20,17 +20,16 @@ public class HeaderBasedConfigResolver implements KeycloakConfigResolver {
     public KeycloakDeployment resolve(OIDCHttpFacade.Request request) {
 
         String host = request.getHeader("Host");
-        String app = "app1", realm = "realm-1";
+        String realm = "realm-1";
         if(host.startsWith("app2")) {
-            app = "app2";
             realm = "realm-2";
         }
 
         if (!cache.containsKey(realm)) {
             InputStream is = getClass().getResourceAsStream("/" + realm + "-keycloak.json");
-            cache.put(app, KeycloakDeploymentBuilder.build(is));
+            cache.put(realm, KeycloakDeploymentBuilder.build(is));
         }
-        return cache.get(app);
+        return cache.get(realm);
     }
 
     static void setAdapterConfig(AdapterConfig adapterConfig) {
