@@ -1,6 +1,6 @@
 package com.poc;
 
-import com.poc.config.resolvers.HeaderBasedConfigResolver;
+import com.poc.config.resolution.HeaderBasedConfigResolver;
 import com.poc.data.Customer;
 import com.poc.data.CustomerRepository;
 import org.keycloak.adapters.KeycloakConfigResolver;
@@ -11,7 +11,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
-import com.poc.config.resolvers.UrlBasedConfigResolver;
 
 @SpringBootApplication
 public class KeycloakMultiTenantApplication {
@@ -22,13 +21,6 @@ public class KeycloakMultiTenantApplication {
         SpringApplication.run(KeycloakMultiTenantApplication.class, args);
     }
 
-    /*
-        @Bean
-        @ConditionalOnMissingBean(UrlBasedConfigResolver.class)
-        public KeycloakConfigResolver keycloakConfigResolver() {
-            return new UrlBasedConfigResolver();
-        }
-        */
     @Bean
     @ConditionalOnMissingBean(HeaderBasedConfigResolver.class)
     public KeycloakConfigResolver keycloakConfigResolver() {
@@ -38,7 +30,7 @@ public class KeycloakMultiTenantApplication {
     @Bean
     public CommandLineRunner demo(CustomerRepository repository) {
         return (args) -> {
-            // save a few customers
+            /* init data */
             repository.save(new Customer("Jack", "Bauer", "realm-1"));
             repository.save(new Customer("Chloe", "O'Brian", "realm-1"));
             repository.save(new Customer("Kim", "Bauer", "realm-1"));

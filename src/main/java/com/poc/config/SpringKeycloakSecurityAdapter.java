@@ -9,11 +9,14 @@ public class SpringKeycloakSecurityAdapter extends AbstractHttpConfigurer<Spring
 
     @Override
     public void init(HttpSecurity http) throws Exception {
-        http.csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and().authorizeRequests().antMatchers(HttpMethod.OPTIONS).permitAll()
-                .antMatchers("/logout", "/", "/unsecured", "/h2-console/**").permitAll()
-                .antMatchers("/**/protected-resource").authenticated()
-                .anyRequest().denyAll();
+        http
+                .csrf().disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                    .authorizeRequests().antMatchers(HttpMethod.OPTIONS).permitAll()
+                    .antMatchers("/logout", "/", "/unsecured", "/h2-console/**").permitAll()
+                    .antMatchers("/customers").authenticated()
+                    .anyRequest().denyAll();
 
     }
 
