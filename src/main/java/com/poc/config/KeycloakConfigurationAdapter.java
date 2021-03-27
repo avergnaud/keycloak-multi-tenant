@@ -14,6 +14,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.Authentication;
@@ -124,23 +125,23 @@ public class KeycloakConfigurationAdapter extends KeycloakWebSecurityConfigurerA
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                /* pour http://localhost:8080/h2-console */
-                .headers().frameOptions().disable()
-                .and()
-                    .sessionManagement()
-                    .sessionAuthenticationStrategy(sessionAuthenticationStrategy())
-                .and()
-                    .addFilterBefore(keycloakPreAuthActionsFilter(), LogoutFilter.class)
-                    .addFilterBefore(keycloakAuthenticationProcessingFilter(), X509AuthenticationFilter.class)
-                    .exceptionHandling()
-                    .authenticationEntryPoint(authenticationEntryPoint())
-                .and()
-                    .logout()
-                    .addLogoutHandler(keycloakLogoutHandler())
-                    .logoutUrl("/tenant/*/logout")
-                    .logoutSuccessHandler(
-                        (HttpServletRequest request, HttpServletResponse response, Authentication authentication) -> response.setStatus(HttpServletResponse.SC_OK))
-                .and()
-                    .apply(new SpringKeycloakSecurityAdapter());
+                .authorizeRequests()
+                    .antMatchers(HttpMethod.OPTIONS).permitAll()
+                    .and()
+                        .sessionManagement()
+                        .sessionAuthenticationStrategy(sessionAuthenticationStrategy())
+                    .and()
+                        .addFilterBefore(keycloakPreAuthActionsFilter(), LogoutFilter.class)
+                        .addFilterBefore(keycloakAuthenticationProcessingFilter(), X509AuthenticationFilter.class)
+                        .exceptionHandling()
+                        .authenticationEntryPoint(authenticationEntryPoint())
+                    .and()
+                        .logout()
+                        .addLogoutHandler(keycloakLogoutHandler())
+                        .logoutUrl("/tenant/*/logout")
+                        .logoutSuccessHandler(
+                            (HttpServletRequest request, HttpServletResponse response, Authentication authentication) -> response.setStatus(HttpServletResponse.SC_OK))
+                    .and()
+                        .apply(new SpringKeycloakSecurityAdapter());
     }
 }

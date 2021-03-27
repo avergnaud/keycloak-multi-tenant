@@ -13,10 +13,11 @@ public class SpringKeycloakSecurityAdapter extends AbstractHttpConfigurer<Spring
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                    .authorizeRequests().antMatchers(HttpMethod.OPTIONS).permitAll()
-                    .antMatchers("/logout", "/", "/unsecured", "/h2-console/**").permitAll()
-                    .antMatchers("/**/customers").authenticated()
-                    .anyRequest().denyAll();
+                    .authorizeRequests()
+                        .antMatchers(HttpMethod.OPTIONS).permitAll()
+                        .antMatchers("/logout", "/", "/unsecured").permitAll()
+                        .antMatchers("/**/customers").authenticated()
+                        .anyRequest().denyAll();
 
     }
 
