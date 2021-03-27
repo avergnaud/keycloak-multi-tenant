@@ -1,8 +1,8 @@
 # Keycloak multi tenant 
 
-Documentation et code source pour :
- * ["URL based"](https://github.com/avergnaud/keycloak-multi-tenant/tree/url-based)
- * ["Header based"](https://github.com/avergnaud/keycloak-multi-tenant/tree/header-based)
+**Documentation** et **code source** pour
+ * Solution "URL based" : [branche url-based](https://github.com/avergnaud/keycloak-multi-tenant/tree/url-based)
+ * Solution "Header based' : [branche header-based](https://github.com/avergnaud/keycloak-multi-tenant/tree/header-based)
 
 ## principe
 
