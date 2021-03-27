@@ -69,7 +69,9 @@ benoit/benoit
 
 ## Séquence
 
-Ici détailler le flux OAuth...
+**Première requête à [http://localhost:8080/tenant/realm-1/customers](http://localhost:8080/tenant/realm-1/customers)**
+
+![url-based-flow_detail](./doc/url-based-flow_detail.png?raw=true)
 
 # Classes
 
