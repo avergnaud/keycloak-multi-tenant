@@ -36,11 +36,12 @@ public class KeycloakConfigurationAdapter extends KeycloakWebSecurityConfigurerA
 
     /**
      * https://docs.spring.io/spring-security/site/docs/4.2.5.RELEASE/apidocs/org/springframework/security/config/annotation/authentication/configuration/EnableGlobalAuthentication.html
-     * "The EnableGlobalAuthentication annotation signals that the annotated class can be used to configure a global instance of AuthenticationManagerBuilder"
+     * "The EnableGlobalAuthentication annotation signals that the annotated class can be used to configure a
+     * global instance of AuthenticationManagerBuilder"
      * Registers the KeycloakAuthenticationProvider with the authentication manager.
      */
     @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+    public void configureGlobal(AuthenticationManagerBuilder auth) {
         KeycloakAuthenticationProvider keycloakAuthenticationProvider = keycloakAuthenticationProvider();
         /* https://www.keycloak.org/docs/latest/securing_apps/#naming-security-roles */
         SimpleAuthorityMapper soa = new SimpleAuthorityMapper();
@@ -70,7 +71,9 @@ public class KeycloakConfigurationAdapter extends KeycloakWebSecurityConfigurerA
 
     /*
     https://github.com/keycloak/keycloak-documentation/blob/master/securing_apps/topics/oidc/java/spring-security-adapter.adoc
-    "Spring Boot attempts to eagerly register filter beans with the web application context. Therefore, when running the Keycloak Spring Security adapter in a Spring Boot environment, it may be necessary to add FilterRegistrationBeans to your security configuration to prevent the Keycloak filters from being registered twice."
+    "Spring Boot attempts to eagerly register filter beans with the web application context. Therefore, when running
+    the Keycloak Spring Security adapter in a Spring Boot environment, it may be necessary to add FilterRegistrationBeans to
+    your security configuration to prevent the Keycloak filters from being registered twice."
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Bean
@@ -106,7 +109,10 @@ public class KeycloakConfigurationAdapter extends KeycloakWebSecurityConfigurerA
 
     /*
     https://github.com/keycloak/keycloak-documentation/blob/master/securing_apps/topics/oidc/java/spring-security-adapter.adoc
-    "Spring Boot 2.1 also disables spring.main.allow-bean-definition-overriding by default. This can mean that an BeanDefinitionOverrideException will be encountered if a Configuration class extending KeycloakWebSecurityConfigurerAdapter registers a bean that is already detected by a @ComponentScan. This can be avoided by overriding the registration to use the Boot-specific @ConditionalOnMissingBean annotation, as with HttpSessionManager below."
+    "Spring Boot 2.1 also disables spring.main.allow-bean-definition-overriding by default. This can mean that an
+    BeanDefinitionOverrideException will be encountered if a Configuration class extending KeycloakWebSecurityConfigurerAdapter
+    registers a bean that is already detected by a @ComponentScan. This can be avoided by overriding the registration to use
+    the Boot-specific @ConditionalOnMissingBean annotation, as with HttpSessionManager below."
      */
     @Bean
     @Override
@@ -118,17 +124,21 @@ public class KeycloakConfigurationAdapter extends KeycloakWebSecurityConfigurerA
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                /* pour http://localhost:8080/h2-console */
-                .headers().frameOptions().disable()
-                .and()
                 .sessionManagement()
-                .sessionAuthenticationStrategy(sessionAuthenticationStrategy())
-                .and().addFilterBefore(keycloakPreAuthActionsFilter(), LogoutFilter.class)
-                .addFilterBefore(keycloakAuthenticationProcessingFilter(), X509AuthenticationFilter.class).exceptionHandling()
-                .authenticationEntryPoint(authenticationEntryPoint())
-                .and().logout().addLogoutHandler(keycloakLogoutHandler()).logoutUrl("/tenant/*/logout").logoutSuccessHandler(
-                (HttpServletRequest request, HttpServletResponse response, Authentication authentication) -> response.setStatus(HttpServletResponse.SC_OK))
-                .and().apply(new SpringKeycloakSecurityAdapter());
-
+                    .sessionAuthenticationStrategy(sessionAuthenticationStrategy())
+                .and()
+                    .addFilterBefore(keycloakPreAuthActionsFilter(), LogoutFilter.class)
+                    .addFilterBefore(keycloakAuthenticationProcessingFilter(), X509AuthenticationFilter.class)
+                    .exceptionHandling()
+                    .authenticationEntryPoint(authenticationEntryPoint())
+                .and()
+                    .logout()
+                    .addLogoutHandler(keycloakLogoutHandler())
+                    .logoutUrl("/tenant/*/logout")
+                    .logoutSuccessHandler(
+                        (HttpServletRequest request, HttpServletResponse response, Authentication authentication) -> response.setStatus(HttpServletResponse.SC_OK)
+                    )
+                .and()
+                    .apply(new SpringKeycloakSecurityAdapter());
     }
 }

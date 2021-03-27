@@ -1,4 +1,4 @@
-package com.poc.config.resolvers;
+package com.poc.config.resolution;
 
 import org.keycloak.adapters.KeycloakConfigResolver;
 import org.keycloak.adapters.KeycloakDeployment;
@@ -19,18 +19,26 @@ public class HeaderBasedConfigResolver implements KeycloakConfigResolver {
     @Override
     public KeycloakDeployment resolve(OIDCHttpFacade.Request request) {
 
-        String host = request.getHeader("Host");
-        String app = "app1", realm = "realm-1";
-        if(host.startsWith("app2")) {
-            app = "app2";
-            realm = "realm-2";
-        }
+        String realm = getRealm(request.getHeader("Host"));
 
         if (!cache.containsKey(realm)) {
             InputStream is = getClass().getResourceAsStream("/" + realm + "-keycloak.json");
-            cache.put(app, KeycloakDeploymentBuilder.build(is));
+            cache.put(realm, KeycloakDeploymentBuilder.build(is));
         }
-        return cache.get(app);
+        return cache.get(realm);
+    }
+
+    /**
+     * utils method
+     * @return
+     */
+    public static String getRealm(String host) {
+        if(host.startsWith("app1")) {
+            return "realm-1";
+        } else if(host.startsWith("app2")) {
+            return "realm-2";
+        }
+        throw new IllegalStateException("Cannot resolve realm from " + host);
     }
 
     static void setAdapterConfig(AdapterConfig adapterConfig) {
