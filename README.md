@@ -73,7 +73,7 @@ Ici détailler le flux OAuth...
 
 # Classes
 
-## PathBasedConfigResolver
+## UrlBasedConfigResolver
 
 Retourne un KeycloakDeployment en fonction du path.
 
@@ -81,7 +81,7 @@ Charge :
 * soit realm-1-keycloak.json
 * soit realm-2-keycloak.json
 
-![PathBasedConfigResolver](./doc/keycloak_1.png?raw=true)
+![UrlBasedConfigResolver](./doc/UrlBasedConfigResolver.png?raw=true)
 
 ## MultitenantKeycloakAuthenticationEntryPoint
 
