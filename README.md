@@ -56,8 +56,6 @@ ou
 ```
 mvn spring-boot:run
 ```
-Voir les données
-[http://localhost:8080/h2-console/](http://localhost:8080/h2-console/)
 
 Validation du fonctionnement multi tenant :
 * [http://app1:8080/customers](http://app1:8080/customers)
@@ -69,7 +67,7 @@ benoit/benoit
 
 ## Séquence
 
-Ici détailler le flux OAuth...
+![header-based-flow_detail](./doc/header-based-flow_detail.png?raw=true)
 
 # Classes
 

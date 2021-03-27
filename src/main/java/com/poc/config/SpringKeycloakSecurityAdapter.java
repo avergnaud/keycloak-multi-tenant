@@ -14,7 +14,7 @@ public class SpringKeycloakSecurityAdapter extends AbstractHttpConfigurer<Spring
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                     .authorizeRequests().antMatchers(HttpMethod.OPTIONS).permitAll()
-                    .antMatchers("/logout", "/", "/unsecured", "/h2-console/**").permitAll()
+                    .antMatchers("/logout", "/", "/unsecured").permitAll()
                     .antMatchers("/customers").authenticated()
                     .anyRequest().denyAll();
 
