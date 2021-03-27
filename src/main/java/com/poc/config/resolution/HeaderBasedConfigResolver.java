@@ -1,7 +1,4 @@
-package com.poc.config.resolvers;
-
-import java.io.InputStream;
-import java.util.concurrent.ConcurrentHashMap;
+package com.poc.config.resolution;
 
 import org.keycloak.adapters.KeycloakConfigResolver;
 import org.keycloak.adapters.KeycloakDeployment;
@@ -9,7 +6,10 @@ import org.keycloak.adapters.KeycloakDeploymentBuilder;
 import org.keycloak.adapters.OIDCHttpFacade;
 import org.keycloak.representations.adapters.config.AdapterConfig;
 
-public class UrlBasedConfigResolver implements KeycloakConfigResolver {
+import java.io.InputStream;
+import java.util.concurrent.ConcurrentHashMap;
+
+public class HeaderBasedConfigResolver implements KeycloakConfigResolver {
 
     private final ConcurrentHashMap<String, KeycloakDeployment> cache = new ConcurrentHashMap<>();
 
@@ -19,15 +19,8 @@ public class UrlBasedConfigResolver implements KeycloakConfigResolver {
     @Override
     public KeycloakDeployment resolve(OIDCHttpFacade.Request request) {
 
-        String path = request.getURI();
-        int index = path.indexOf("tenant/");
-        if (index == -1) {
-            throw new IllegalStateException("Tenant not found");
-        }
-        String realm = path.substring(path.indexOf("tenant/")).split("/")[1];
-        if (realm.contains("?")) {
-            realm = realm.split("\\?")[0];
-        }
+        String realm = getRealm(request.getHeader("Host"));
+
         if (!cache.containsKey(realm)) {
             InputStream is = getClass().getResourceAsStream("/" + realm + "-keycloak.json");
             cache.put(realm, KeycloakDeploymentBuilder.build(is));
@@ -35,8 +28,21 @@ public class UrlBasedConfigResolver implements KeycloakConfigResolver {
         return cache.get(realm);
     }
 
+    /**
+     * utils method
+     * @return
+     */
+    public static String getRealm(String host) {
+        if(host.startsWith("app1")) {
+            return "realm-1";
+        } else if(host.startsWith("app2")) {
+            return "realm-2";
+        }
+        throw new IllegalStateException("Cannot resolve realm from " + host);
+    }
+
     static void setAdapterConfig(AdapterConfig adapterConfig) {
-        UrlBasedConfigResolver.adapterConfig = adapterConfig;
+        HeaderBasedConfigResolver.adapterConfig = adapterConfig;
     }
 
 }
