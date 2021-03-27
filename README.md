@@ -1,101 +1,28 @@
-# Install
+# Keycloak multi tenant 
 
-## Install & conf keycloak
-```
-docker container run --name=keycloak-multi -p 8081:8080 -e KEYCLOAK_USER=admin -e KEYCLOAK_PASSWORD=admin jboss/keycloak
-```
-ou
-```
-./standalone.sh -Djboss.socket.binding.port-offset=1
-```
+Documentation et code source pour :
+ * ["URL based"](https://github.com/avergnaud/keycloak-multi-tenant/tree/url-based)
+ * ["Header based"](https://github.com/avergnaud/keycloak-multi-tenant/tree/header-based)
 
-Créer 2 realm dans Keycloak :
-* realm-1
-* realm-2
+## principe
 
-![realms](./doc/realms.png?raw=true)
+![keycloak-mt-principe](./doc/keycloak-mt-principe.png?raw=true)
 
-Créer 2 clients dans Keycloak :
-* realm-1, web-client-id-realm1
-* realm-2, web-client-id-realm2
+## Données
 
-![client1](./doc/client1.png?raw=true)
+Table Customer
 
-valid redirect_uri :
-```
-http://localhost:8080/tenant/realm-1/sso/login
-```
+| firstName | lastName | realm |
+| ------------- | ------------- | ------------- |
+| Jack | Bauer | realm-1 |
+| David | Palmer | realm-1 |
+| ... | ... | ... |
+| Adrien | Vergnaud | realm-2 |
+| ... | ... | ... |
 
-![client2](./doc/client2.png?raw=true)
+## notes
 
-valid redirect_uri :
-```
-http://localhost:8080/tenant/realm-2/sso/login
-```
-
-Créer 2 users dans Keycloak :
-* realm-1, user adrien
-* realm-2, user benoit
-
-![adrien](./doc/adrien.png?raw=true)
-
-![benoit](./doc/benoit.png?raw=true)
-
-# run
-
-## run keycloak
-```
-docker container start keycloak-multi
-```
-
-## run this app
-```
-mvn spring-boot:run
-```
-Voir les données
-http://localhost:8080/h2-console/
-
-Validation du fonctionnement multi tenant :
-* http://localhost:8080/tenant/realm-1/protected-resource
-* http://app1:8080/protected-resource
-adrien/adrien
-* http://localhost:8080/tenant/realm-2/protected-resource
-* http://app2:8080/protected-resource
-benoit/benoit
-
-# Doc
-
-## Séquence
-
-Ici détailler le flux OAuth...
-
-## Classes
-
-Retourne un KeycloakDeployment en fonction du path.
-
-Charge :
-* soit realm-1-keycloak.json
-* soit realm-2-keycloak.json
-
-![PathBasedConfigResolver](./doc/keycloak_1.png?raw=true)
-
-***
-
-En fonction du path, définit une redirection :
-* soit /tenant/realm-1/sso/login
-* soit /tenant/realm-2/sso/login
-
-![MultitenantKeycloakAuthenticationEntryPoint](./doc/keycloak_2.png?raw=true)
-
-***
-
-Configuration sécurité :
-
-![KeycloakConfigurationAdapter](./doc/keycloak_3.png?raw=true)
-
-# notes
-
-## OAuth 2.0
+### OAuth 2.0
 
 OAuth 2.0 n'est pas un protocole d'authentification [source](https://oauth.net/articles/authentication/).
 
@@ -115,15 +42,15 @@ OAuth 2.0 ne gère pas le SSO.
 Dans OAuth, le access-token n'est en fait pas destiné à l'application cliente. 
 **L'application cliente est authorisée à présenter le access-token** au _resource server_.
 
-"This problem stems from the fact that the client is not the intended _audience_ of the OAuth access token. Instead, it is 
-the authorized presenter of that token, and the _audience_ is in fact the protected resource. The protected resource is not 
-generally going to be in a position to tell if the user is still present by the token alone, since by the very nature and 
-design of the OAuth protocol the user will not be available on the connection between the client and protected resource"
+> "This problem stems from the fact that the client is not the intended _audience_ of the OAuth access token. Instead, it is 
+> the authorized presenter of that token, and the _audience_ is in fact the protected resource. The protected resource is not 
+> generally going to be in a position to tell if the user is still present by the token alone, since by the very nature and 
+> design of the OAuth protocol the user will not be available on the connection between the client and protected resource"
 
 C'est le principe de OAuth : l'authentification est découplée de l'authorization. Au moment où l'application accède à 
 la _resource_, l'utilisateur propriétaire de la ressource n'intervient pas. Il a déjà préalablement donné son accord.
 
-## De OAuth 2.0 à OpenID Connect
+### De OAuth 2.0 à OpenID Connect ?
 
 On peut construire un protocole **d'authentification et d'identité** sur le protocole 
  OAuth 2.0 **d'authorisation et de délégation** [source](https://oauth.net/articles/authentication/)
@@ -131,17 +58,19 @@ On peut construire un protocole **d'authentification et d'identité** sur le pro
 L'utlisateur va déléguer l'accès à une ressource particulière : son identité. L'application client va alors accéder à 
 la _resource_ identité (une API) pour ainsi découvrir **qui** en a autorisé l'accès à l'orgine.
 
-As it turns out, though, there are a handful of things that can be used along with OAuth to create an authentication and identity 
-protocol on top of this delegation and authorization protocol. In nearly all of these cases, the core functionality of OAuth 
-remains intact, and what's happening is that the user is delegating access to their identity to the application they're trying to log in to. 
-The client application then becomes a consumer of the identity API, thereby finding out who authorized the client in the first place. 
-One major benefit of building authentication on top of authorization in this way is that it allows for management of end-user consent, 
-which is very important in cross-domain identity federation at internet scale. Another important benefit is that the user can 
-delegate access to other protected APIs along side their identity at the same time, making it much simpler for both application developers 
-and end users to manage. With one call, an application can find out if a user is logged in, what the app should call the user, 
-download photos for printing, and post updates to their message stream. 
+> As it turns out, though, there are a handful of things that can be used along with OAuth to create an authentication and identity 
+> protocol on top of this delegation and authorization protocol. In nearly all of these cases, the core functionality of OAuth 
+> remains intact, and what's happening is that the user is delegating access to their identity to the application they're trying to log in to. 
+> The client application then becomes a consumer of the identity API, thereby finding out who authorized the client in the first place. 
+> One major benefit of building authentication on top of authorization in this way is that it allows for management of end-user consent, 
+> which is very important in cross-domain identity federation at internet scale. Another important benefit is that the user can 
+> delegate access to other protected APIs along side their identity at the same time, making it much simpler for both application developers 
+> and end users to manage. With one call, an application can find out if a user is logged in, what the app should call the user, 
+> download photos for printing, and post updates to their message stream. 
 
-"OpenID Connect's ID Token provides a secondary token along side the access token that communicates the authentication information directly to the client."
+Cette _resource_ est fournie par le _identity provider_ (_authorization server_)
+
+> "OpenID Connect's ID Token provides a secondary token along side the access token that communicates the authentication information directly to the client."
 
 OpenID Connect est une extension de OAuth 2.0 [source](https://www.keycloak.org/docs/latest/securing_apps/index.html#overview)
 
@@ -165,30 +94,16 @@ au _Relying Party_
 
 Le _Identity Provider_ fournit toutes ces informations dans un ID Token.
 Le ID Token (carte d'identité ou passeport) contient un ensemble d'attributs relatifs à l'utilsateur : les _claims_
-Ces _claims_ sont les _consented user informations_
 
-Claims :
+Exemples de _claims_ :
 * Subject
 * Issuing Authority
 * Audience
 * Issue date
 * Expiration Date
-* ...
 
-Ces _claims_ sont regroupés en _scopes_.
-* (openid), profile, email, phone, address
-
-Le _authorization code_ flow de OpenID Connect est le même que le _authorization code_ flow de OAuth 2.0, avec un id-token en plus.
-* La requête initiale sur GET /authorize contient un **scope openid** : demande un id-token
-* La requête initiale sur GET /authorize peut contenir des scopes **profile**, **email** signifie que l'application cliente
-(_Relying Party_) requête l'accès au profile et à l'email de l'utilisateur
-
-A la fin du _authorization code flow_, le _identity provider_ (_authorization server_) renvoie un id-token en plus du access-token.
-L'application _relyin party_ (_client app_) valide le id-token et l'identité est vérifiée.
-
-* Pour obtenir les informations de profile et d'email, l'application envoie un GET /userinfo avec le header authorization Bearer access-token.
+### Notes Keycloak
 
 Un adapter est une "librairie ++" pour un type d'application. Par exemple :
 * adapter OpenID Connect pour Spring Boot [source](https://www.keycloak.org/docs/latest/securing_apps/index.html#_spring_boot_adapter)
 * adapter OpenID Connect pour Spring Security [source](https://www.keycloak.org/docs/latest/securing_apps/index.html#_spring_security_adapter)
-
