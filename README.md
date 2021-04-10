@@ -22,27 +22,85 @@ Table Customer
 
 ## notes
 
+### Authentification et authorization
+
+Quand je vais à l'hôtel, je me présente à l'accueil lors de mon arrivée.
+Je m'authentifie avec ma carte d'identité, éventuellement un numéro de réservation, une empreinte Carte Bancaire... Je prouve que je suis bien qui je prétend être. L'hôtel sait que "monsieur Untel est présent,
+que c'est un client régulier, qu'il habite à telle adresse, avec tel n° de téléphone, tel email".
+L'hôtel sait que je suis présent. L'hôtel sait comment je me suis authentifié en arrivant.
+L'hôtel me délivre un badge
+
+J'ai réservé une chambre, une place de parking, un accès au self, un vélo (?).
+Lorsque je rentre dans ma chambre, je ne réitère pas le process d'authentification...
+Je passe mon badge est la porte s'ouvre. Mais rien ne prouve que c'est moi. J'ai peut-être prêté mon badge
+à quelqu'un. Idem pour l'accès au self, au golf, au parking, au sauna etc.
+Le badge est un moyen de déléguer l'accès à tous ces services (au porteur du badge).
+Le badge est comme une clé. Mais la clé ne dit rien sur le propiétaire de la clé.
+
+Avec cet usage du badge, l'hôtel a décorrélé l'authentification de l'authorization.
+Je ne m'authentifie pas à chaque fois que j'accède à ma chambre, au self, au parking.
+Si je prête mon badge à mon conjoint pour accéder au self, 
+* j'aurai délégué l'accès au self à mon conjoint
+* j'aurai autorisé mon conjoint à accéder au self
+* la "cible" du badge reste le self
+
+Si je prête mon badge à quelqu'un pour qu'il accède à ma voiture dans le parking,
+* j'autorise cette personne à accéder au parking "en mon nom"
+
+On ne peut pas vraiment pousser l'analogie plus loin...
+
+### Avant OAuth 2.0
+
+On considère un utilisateur, _resource-owner_ de ses contacts Google.
+Ses contacts sont sur le _resource server_ contacts.google.com.
+On considère une application tierce, le _client_ qui veut accéder à ses contacts Google.
+Dans un modèle client-serveur classique, le _client_ va requêter le _resource server_ en utilisant les identifiants du _resource owner_.
+Autrement dit, pour autoriser l'application tierce à accéder à ses contacts, l'utilisateur doit partager ses identifiants avec l'application tierce.
+Cela pose [plusieurs problèmes](https://tools.ietf.org/html/rfc6749#page-4), notamment :
+* En tant qu'utilisateur, je ne fais confiance qu'à Google pour gérer mon authentification Google. Il se peut qu'une application tierce gère mal mes identifiants par exemple en persistant le password.
+* Je suis prêt à faire confiance à une application tierce pour accéder en lecture à mes contacts. Mais avec mes identifiants Google, cette application pourrait aussi accéder à mes emails.
+* Je veux pouvoir révoquer l'accès à mes contacts pour cette application...
+
+Avant OAuth 2.0, dés lors que l'application tierce _client_ possède les identifiants de l'utilisateur _resource owner_, il n'y a pas de distinction possible entre les deux.
+
+![avant-oauth2](./doc/avant_oauth20.png?raw=true)
+
 ### OAuth 2.0
+
+[https://tools.ietf.org/](https://tools.ietf.org/)
+
+OAuth 2.0 introduit une couche d'**authorisation** qui distingue les rôles de _client_ et de _resource owner_. Avec OAuth 2.0, l'application cliente demande un accès aux ressources contrôlées par le _resource owner_ qui sont servies par le _resource server_. Pour accéder à ces ressources privées, l'application cliente n'utilise plus les identifiants de l'utilisateur _resource owner_.
+
+Le framework OAuth 2.0 permet à des applications tierces d'accéder à des ressources privées d'un utilisateur en son nom.
 
 OAuth 2.0 n'est pas un protocole d'authentification [source](https://oauth.net/articles/authentication/).
 
 L'authentification dit à une application :
 * qui est l'utilisateur (avec un identifiant, une adresse mail, un username, etc)
 * est-ce qu'il est présent
+* comment il s'authentifie
 
-OAuth 2.0 ne donne pas ces informatios à une application cliente. OAuth 2.0 dit à une application :
+OAuth 2.0 ne donne pas ces informations à une application cliente. OAuth 2.0 dit à une application :
 * comment obtenir accès (avec des droits) à une ressource privée de l'utilisateur
 
+#### Le access-token
+
 L'utilisateur (_resource owner_) délègue l'accès à sa _resource_ à l'application, avec un access-token.
-(Le access-tooken est comme une clé qui ouvre votre appartement)
+Le access-tooken est comme un badge d'hôtel, ou une clé qui ouvre votre appartement.
 Le access-token ne fournit pas à l'application les information d'authentification.
-OAuth 2.0 ne dit pas quand, où ni comment a eu lieu l'authentification.
-OAuth 2.0 ne gère pas le SSO.
+
+Au lieu d'utiliser les identifiants de l'utilisateur, le _client_ obtient un access-token. Ce access-token définit les _scopes_ i.e. le périmètre d'accès consenti par l'utilisateur. Le access-token a une durée de vie courte (minutes). Les access-token sont fournis par le _authorization server_ (_token issuer_) avec l'approbation de l'utilisateur final.
+
+![oauth2_authorization_code_grant](./doc/oauth2_authorization_code_grant.png?raw=true)
+
+#### OAuth découpe authentification et authorization
+
+[https://oauth.net/articles/authentication/](https://oauth.net/articles/authentication/)
 
 Dans OAuth, le access-token n'est en fait pas destiné à l'application cliente. 
 **L'application cliente est authorisée à présenter le access-token** au _resource server_.
 
-> "This problem stems from the fact that the client is not the intended _audience_ of the OAuth access token. Instead, it is 
+> "The client is not the intended _audience_ of the OAuth access token. Instead, it is 
 > the authorized presenter of that token, and the _audience_ is in fact the protected resource. The protected resource is not 
 > generally going to be in a position to tell if the user is still present by the token alone, since by the very nature and 
 > design of the OAuth protocol the user will not be available on the connection between the client and protected resource"
