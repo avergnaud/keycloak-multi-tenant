@@ -243,6 +243,15 @@ Ce endpoint retourne les _claims_ ou "informations utilisateur" que l'utilisateu
 
 > It should be noted that clients are not required to use the access token, since the ID Token contains all the necessary information for processing the authentication event. However, in order to provide compatibility with OAuth and match the general tendency for authorizing identity and other API access in parallel, OpenID Connect always issues the ID token along side an OAuth access token. In addition to the claims in the ID Token, OpenID Connect defines a standard protected resource that contains claims about the current user. 
 
+### Multi Tenant
+
+[https://www.keycloak.org/docs/latest/server_admin/](https://www.keycloak.org/docs/latest/server_admin/)
+> A realm manages a set of users, credentials, roles, and groups. A user belongs to and logs into a realm. Realms are isolated from one another and can only manage and authenticate the users that they control.
+
+Un realm, ou royaume, ou tenant est un ensemble de comptes utilisateurs avec leurs identifiants, rôles et groupes. Chaque realm est isolé des autres et gère l'authentification de ses propres utilisateurs.
+
+On peut définir plusieurs realms très facilement dans Keycloak.
+
 ### Notes Keycloak
 
 Un adapter est une "librairie ++" pour un type d'application. Par exemple :
