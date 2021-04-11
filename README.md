@@ -1,4 +1,4 @@
-# De OAuht 2.0 à OPenID Connect multi tenant
+# De OAuht 2.0 à OpenID Connect multi tenant
 
 **Documentation** et **code source** pour
  * Solution "URL based" : [branche url-based](https://github.com/avergnaud/keycloak-multi-tenant/tree/url-based)
