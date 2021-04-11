@@ -251,17 +251,20 @@ Un realm Keycloak est un ensemble de comptes utilisateurs avec leurs identifiant
 
 ### Tenants
 
-Le multi-tenancy est un concept issu du cloud. Un _tenant_ est un client utilisateur d'une solution SaaS. 
+Le multi-tenancy est un concept issu du cloud. Un _tenant_ est un client d'une solution SaaS (locataire). 
+
+Chaque _tenant_ a sa propre population d'utilisateurs.
+
 * Une solution _single tenant_ est un programme qui sert un seul client. 
 * Une solution _multi tenant_ est un programme qui sert plusieurs clients, de façon isolée.
 
 Les _realms_ Keycloak sont une solution pour répondre à un besoin d'authentification _multi tenant_.
 
-L'accès à une ressource protégée, servie par une webapp, va être sécurisée à travers différents royaumes Keycloak.
+L'accès à une ressource protégée, servie par une webapp, va être sécurisé à travers différents royaumes Keycloak.
 
 ### Exemple d'utilisation OIDC Multi tenant
 
-En fonction de l'utilisateur qui fait la requête, l'application _secured app_ va retourner des ressources différentes.
+En fonction du tenant de l'utilisateur qui fait la requête, l'application _secured app_ va retourner des ressources différentes.
 
 ![keycloak-mt-principe](./doc/keycloak-mt-principe.png?raw=true)
 
@@ -273,9 +276,16 @@ Table Customer
 | ------------- | ------------- | ------------- |
 | Jack | Bauer | realm-1 |
 | David | Palmer | realm-1 |
-| ... | ... | ... |
+| Chloe | O'Brian | realm-1 |
+| Kim | Bauer | realm-1 |
+| Michelle | Dessler | realm-1 |
+| Jules | Muller | realm-2 |
+| Benoit | Laffitte | realm-2 |
 | Adrien | Vergnaud | realm-2 |
-| ... | ... | ... |
+| Germain | Vivion | realm-2 |
+| Gary | Morisson | realm-2 |
+
+## Démo
 
 **Documentation** et **code source** pour
  * Solution "URL based" : [branche url-based](https://github.com/avergnaud/keycloak-multi-tenant/tree/url-based)
