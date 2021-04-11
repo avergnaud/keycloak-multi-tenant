@@ -1,0 +1,5 @@
+HTML Form URL Encoded: application/x-www-form-urlencoded
+"grant_type" = "authorization_code"
+"code" = "4fec8b14-7052-4106-a44d-57a054e0b047.ff5feb58-53fd-4290-b67d-9bf913522709.3a343a89-5dee-4595-bd0c-61ab56dab3c3"
+"redirect_uri" = "http://app1:8080/tenant/realm-1/sso/login"
+"client_id" = "web-client-id-realm2"

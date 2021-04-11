@@ -56,12 +56,18 @@ ou
 ```
 mvn spring-boot:run
 ```
+ou
+```
+./run.sh
+```
 
 Validation du fonctionnement multi tenant :
 * [http://app1:8080/customers](http://app1:8080/customers)
 adrien/adrien
 * [http://app2:8080/customers](http://app2:8080/customers)
 benoit/benoit
+
+http and (tcp.port eq 8080 or tcp.port eq 8081)
 
 # Doc
 
