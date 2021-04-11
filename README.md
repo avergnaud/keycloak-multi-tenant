@@ -264,6 +264,9 @@ Chaque _tenant_ a sa propre population d'utilisateurs.
 
 Les _realms_ Keycloak sont une solution pour répondre à un besoin d'authentification _multi tenant_.
 
+[https://quarkus.io/guides/security-openid-connect-multitenancy](https://quarkus.io/guides/security-openid-connect-multitenancy)
+> When serving multiple customers from the same application (e.g.: SaaS), each customer is a tenant. By enabling multi-tenancy support to your applications you are allowed to also support distinct authentication policies for each tenant even though if that means authenticating against different OpenID Providers, such as Keycloak and Google.
+
 L'accès à une ressource protégée, servie par une webapp, va être sécurisé à travers différents royaumes Keycloak.
 
 ### Exemple d'utilisation OIDC Multi tenant
@@ -272,7 +275,7 @@ En fonction du tenant de l'utilisateur qui fait la requête, l'application _secu
 
 ![keycloak-mt-principe](./doc/keycloak-mt-principe.png?raw=true)
 
-## Données
+#### Données
 
 Table Customer
 
@@ -289,11 +292,16 @@ Table Customer
 | Germain | Vivion | realm-2 |
 | Gary | Morisson | realm-2 |
 
-## Démo
+#### Démo
 
 **Documentation** et **code source** pour
  * Solution "URL based" : [branche url-based](https://github.com/avergnaud/keycloak-multi-tenant/tree/url-based)
  * Solution "Header based' : [branche header-based](https://github.com/avergnaud/keycloak-multi-tenant/tree/header-based)
+
+### distinct OpenID Providers (Identity providers)
+
+[https://quarkus.io/guides/security-openid-connect-multitenancy](https://quarkus.io/guides/security-openid-connect-multitenancy)
+> Tenants can be distinct realms or security domains within the same OpenID Provider or even distinct OpenID Providers
 
 ## Notes Keycloak
 
