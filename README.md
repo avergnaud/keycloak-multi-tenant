@@ -1,10 +1,10 @@
-# Keycloak multi tenant 
+# Keycloak multi tenant
 
 **Documentation** et **code source** pour
  * Solution "URL based" : [branche url-based](https://github.com/avergnaud/keycloak-multi-tenant/tree/url-based)
  * Solution "Header based' : [branche header-based](https://github.com/avergnaud/keycloak-multi-tenant/tree/header-based)
 
-## principe
+# Objectif :
 
 ![keycloak-mt-principe](./doc/keycloak-mt-principe.png?raw=true)
 
@@ -20,9 +20,9 @@ Table Customer
 | Adrien | Vergnaud | realm-2 |
 | ... | ... | ... |
 
-## notes
+# De OAuht 2.0 à OPenID Connect multi tenant
 
-### Authentification et authorization
+## Authentification et authorization
 
 Quand je vais à l'hôtel, je me présente à l'accueil lors de mon arrivée.
 Je m'authentifie avec ma carte d'identité, éventuellement un numéro de réservation, une empreinte Carte Bancaire... Je prouve que je suis bien qui je prétend être. L'hôtel sait que "monsieur Untel est présent,
@@ -49,7 +49,7 @@ Si je prête mon badge à quelqu'un pour qu'il accède à ma voiture dans le par
 
 On ne peut pas vraiment pousser l'analogie plus loin...
 
-### Avant OAuth 2.0
+## Avant OAuth 2.0
 
 On considère un utilisateur, _resource-owner_ de ses contacts Google.
 Ses contacts sont sur le _resource server_ contacts.google.com.
@@ -73,11 +73,11 @@ Rappel des rôles...
 * client : Application qui requête la ressource protégée au nom de l'utilisateur final et avec son autorisation.
 * authorization server : Le serveur qui fournit les access-token à l'application client après avoir obtenu le consentement de l'utilisateur
 
-### OAuth 2.0
+## OAuth 2.0
 
 [https://tools.ietf.org/](https://tools.ietf.org/)
 
-OAuth 2.0 introduit une couche d'**authorisation** qui distingue les rôles de _client_ et de _resource owner_. Avec OAuth 2.0, l'application cliente demande un accès aux ressources contrôlées par le _resource owner_ qui sont servies par le _resource server_. Pour accéder à ces ressources privées, l'application cliente n'utilise plus les identifiants de l'utilisateur _resource owner_.
+OAuth 2.0 introduit une couche d'**autorisation** qui distingue les rôles de _client_ et de _resource owner_. Avec OAuth 2.0, l'application cliente demande un accès aux ressources contrôlées par le _resource owner_ qui sont servies par le _resource server_. Pour accéder à ces ressources privées, l'application cliente n'utilise plus les identifiants de l'utilisateur _resource owner_.
 
 Le framework OAuth 2.0 permet à des applications tierces d'accéder à des ressources privées d'un utilisateur en son nom.
 
@@ -91,7 +91,7 @@ L'authentification dit à une application :
 OAuth 2.0 ne donne pas ces informations à une application cliente. OAuth 2.0 dit à une application :
 * comment obtenir accès (avec des droits) à une ressource privée de l'utilisateur
 
-#### Le access-token
+### Le access-token
 
 L'utilisateur (_resource owner_) délègue l'accès à sa _resource_ à l'application, avec un access-token.
 Le access-tooken est comme un badge d'hôtel, ou une clé qui ouvre votre appartement.
@@ -99,7 +99,7 @@ Le access-token ne fournit pas à l'application les information d'authentificati
 
 Au lieu d'utiliser les identifiants de l'utilisateur, le _client_ obtient un access-token. Ce access-token définit les _scopes_ i.e. le périmètre d'accès consenti par l'utilisateur. Le access-token a une durée de vie courte (minutes). Les access-token sont fournis par le _authorization server_ (_token issuer_) avec l'approbation de l'utilisateur final.
 
-#### OAuth découple authentification et autorisation
+### OAuth découple authentification et autorisation
 
 [https://oauth.net/articles/authentication/](https://oauth.net/articles/authentication/)
 
@@ -114,7 +114,7 @@ Dans OAuth, le access-token n'est en fait pas destiné à l'application cliente.
 C'est le principe de OAuth : l'authentification est découplée de l'autorisation. Au moment où l'application accède à
 la _resource_, l'utilisateur propriétaire de la ressource n'intervient pas. Il a déjà préalablement donné son accord.
 
-#### Authorization code flow
+### Authorization code flow
 
 
 Les access-token sont fournis par le _authorization server_ (_token issuer_) avec l'approbation de l'utilisateur final. Comment a lieu ce mécanisme d'approbation / consentement ?
@@ -131,11 +131,11 @@ Le process OAuth 2.0 inclut une étape d'authentification : le _resource owner_ 
 
 ![oauth2_authorization_code_grant](./doc/oauth2_authorization_code_grant.png?raw=true)
 
-#### PKCE enhanced authorization code flow
+### PKCE enhanced authorization code flow
 
 https://auth0.com/docs/flows/authorization-code-flow-with-proof-key-for-code-exchange-pkce#how-it-works
 
-#### Les endpoints OAuth 2.0
+### Les endpoints OAuth 2.0
 
 [https://tools.ietf.org/html/rfc6749#section-3](https://tools.ietf.org/html/rfc6749#section-3)
 
@@ -146,17 +146,15 @@ Exposés par le _authorization server_ :
 Exposé par le _client_ !
 * Redirection endpoint - Utilisé par le _authorization server_ pour transmettre le authorization code au _client_ via redirection
 
-#### Pour aller plus loin
+### Pour aller plus loin
 
 [https://developer.okta.com/blog/2017/06/21/what-the-heck-is-oauth](https://developer.okta.com/blog/2017/06/21/what-the-heck-is-oauth)
 
-
-### De OAuth 2.0 à OpenID Connect
+## De OAuth 2.0 à OpenID Connect
 
 [https://openid.net/connect/](https://openid.net/connect/)
 
-On peut construire un protocole **d'authentification et d'identité** sur le protocole 
- OAuth 2.0 **d'authorisation et de délégation** [source](https://oauth.net/articles/authentication/)
+On peut construire un protocole **d'authentification et d'identité** sur le protocole OAuth 2.0 **d'autorisation et de délégation** [source](https://oauth.net/articles/authentication/)
 
 Une première idée est que l'utlisateur va déléguer l'accès à une ressource particulière : son identité. L'application client va alors accéder à la _resource_ identité (une API) pour ainsi découvrir **qui** en a autorisé l'accès à l'orgine.
 
@@ -168,12 +166,11 @@ Une deuxième idée est de transmettre un nouveau token en plus du access-token,
 
 > "OpenID Connect's ID Token provides a secondary token along side the access token that communicates the authentication information directly to the client."
 
-
 **Quel est l'apport de OIDC ?**
 On a besoin de OIDC parce-que, même si OAuth fournit la mécanique d'autorisations, il ne fournit pas la mécanique d'authentification. Avec OAuth, le user s'est authentifié et a prouvé qu'il était présent auprès du _authorization server_ mais le seul objectif de cette authentification était de générer un access-token pour l'application cliente. L'utilisateur ne s'authentifie pas directement auprès de l'application cliente. OAuth ne fournit pas l'information de quand, où et comment a eu lieu l'authentification.
 OIDC étend OAuth 2.0 pour permettre à l'application cliente d'obtenir les information d'identité, de récupére les détails relatifs à l'événement d'authentification
 
-### OpenID Connect
+## OpenID Connect
 
 OpenID Connect est une extension / une surcouche de OAuth 2.0 [source](https://www.keycloak.org/docs/latest/securing_apps/index.html#overview).
 OpenID Connect permet à une application cliente de vérifier l'identité d'un utilisateur, à partir de son authentification sur un _authorization server_
@@ -195,7 +192,7 @@ Le _Identity Provider_ est un OAuth 2.0 _Authorization Server_ qui fournit de l'
 * fournit les _claims_ à propos de cet utilisateur
 * fournit les information de l'événement d'authentification au _Relying Party_
 
-#### ID Token
+### ID Token
 
 Comment est-ce que le _identity provider_ fournit au _relying party_ les informations du _end user_ ?
 Le _Identity Provider_ fournit toutes ces informations dans un ID Token.
@@ -218,7 +215,7 @@ _Claims_ optionnels :
 * family_name
 * ...
 
-#### Scopes
+### Scopes
 
 Les scopes sont utilisés pour réclamer certains sous-ensembles de claims. Ces scopes sont des scopes OAuth. Ils sont définis par le standart OIDC.
 Lors de l'authentification initiale, l'application cliente passe les scopes auxquels elle veut avoir accès. Si l'utilisateur final consent à déléguer l'accès à ces scopes, alors le id-token contiendra les claims correspondants.
@@ -235,7 +232,7 @@ _Scopes_ optionnels :
 [https://oauth.net/articles/authentication/](https://oauth.net/articles/authentication/)
 > After all, it's preferable to say "Good Morning, Jane Doe" instead of "Good Morning, 9XE3-JI34-00132A". OpenID Connect defines a set of standardized OAuth scopes that map to subsets of these attributes: profile, email, phone, and address, allowing plain OAuth authorization requests to carry the necessary information for a request.
 
-#### UserInfo Endpoint
+### UserInfo Endpoint
 
 OIDC permet aussi à l'application d'obtenir les informations de l'utilisateur à travers une API REST, plus précisément avec la ressource /userinfo.
 Ce userinfo endpoint est une ressource protégée OAuth 2.0.
@@ -243,16 +240,48 @@ Ce endpoint retourne les _claims_ ou "informations utilisateur" que l'utilisateu
 
 > It should be noted that clients are not required to use the access token, since the ID Token contains all the necessary information for processing the authentication event. However, in order to provide compatibility with OAuth and match the general tendency for authorizing identity and other API access in parallel, OpenID Connect always issues the ID token along side an OAuth access token. In addition to the claims in the ID Token, OpenID Connect defines a standard protected resource that contains claims about the current user. 
 
-### Multi Tenant
+## OIDC Multi Tenant
+
+### Realms
 
 [https://www.keycloak.org/docs/latest/server_admin/](https://www.keycloak.org/docs/latest/server_admin/)
 > A realm manages a set of users, credentials, roles, and groups. A user belongs to and logs into a realm. Realms are isolated from one another and can only manage and authenticate the users that they control.
 
-Un realm, ou royaume, ou tenant est un ensemble de comptes utilisateurs avec leurs identifiants, rôles et groupes. Chaque realm est isolé des autres et gère l'authentification de ses propres utilisateurs.
+Un realm Keycloak est un ensemble de comptes utilisateurs avec leurs identifiants, rôles et groupes. Chaque realm est isolé des autres et gère l'authentification de ses propres utilisateurs. On peut définir plusieurs realms très facilement dans Keycloak.
 
-On peut définir plusieurs realms très facilement dans Keycloak.
+### Tenants
 
-### Notes Keycloak
+Le multi-tenancy est un concept issu du cloud. Un _tenant_ est un client utilisateur d'une solution SaaS. 
+* Une solution _single tenant_ est un programme qui sert un seul client. 
+* Une solution _multi tenant_ est un programme qui sert plusieurs clients, de façon isolée.
+
+Les _realms_ Keycloak sont une solution pour répondre à un besoin d'authentification _multi tenant_.
+
+L'accès à une ressource protégée, servie par une webapp, va être sécurisée à travers différents royaumes Keycloak.
+
+### Exemple d'utilisation OIDC Multi tenant
+
+En fonction de l'utilisateur qui fait la requête, l'application _secured app_ va retourner des ressources différentes.
+
+![keycloak-mt-principe](./doc/keycloak-mt-principe.png?raw=true)
+
+## Données
+
+Table Customer
+
+| firstName | lastName | realm |
+| ------------- | ------------- | ------------- |
+| Jack | Bauer | realm-1 |
+| David | Palmer | realm-1 |
+| ... | ... | ... |
+| Adrien | Vergnaud | realm-2 |
+| ... | ... | ... |
+
+**Documentation** et **code source** pour
+ * Solution "URL based" : [branche url-based](https://github.com/avergnaud/keycloak-multi-tenant/tree/url-based)
+ * Solution "Header based' : [branche header-based](https://github.com/avergnaud/keycloak-multi-tenant/tree/header-based)
+
+## Notes Keycloak
 
 Un adapter est une "librairie ++" pour un type d'application. Par exemple :
 * adapter OpenID Connect pour Spring Boot [source](https://www.keycloak.org/docs/latest/securing_apps/index.html#_spring_boot_adapter)
