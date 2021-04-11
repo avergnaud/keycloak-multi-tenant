@@ -298,7 +298,7 @@ Table Customer
  * Solution "URL based" : [branche url-based](https://github.com/avergnaud/keycloak-multi-tenant/tree/url-based)
  * Solution "Header based' : [branche header-based](https://github.com/avergnaud/keycloak-multi-tenant/tree/header-based)
 
-### distinct OpenID Providers (Identity providers)
+### Distinct OpenID Providers (Identity providers)
 
 [https://quarkus.io/guides/security-openid-connect-multitenancy](https://quarkus.io/guides/security-openid-connect-multitenancy)
 > Tenants can be distinct realms or security domains within the same OpenID Provider or even distinct OpenID Providers
