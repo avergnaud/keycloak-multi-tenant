@@ -63,11 +63,11 @@ Cela pose [plusieurs problèmes](https://tools.ietf.org/html/rfc6749#page-4), no
 
 Avant OAuth 2.0, dés lors que l'application tierce _client_ possède les identifiants de l'utilisateur _resource owner_, il n'y a pas de distinction possible entre les deux.
 
-## Avant :
+## Avant
 
 ![avant-oauth2](./doc/avant_oauth20.png?raw=true)
 
-## Après :
+## Après
 
 ![avec_auth20](./doc/avec_auth20.png?raw=true)
 
