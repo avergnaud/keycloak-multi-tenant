@@ -65,6 +65,14 @@ Avant OAuth 2.0, dés lors que l'application tierce _client_ possède les identi
 
 ![avant-oauth2](./doc/avant_oauth20.png?raw=true)
 
+![avec_auth20](./doc/avec_auth20.png?raw=true)
+
+Rappel des rôles...
+* resource owner : Utilisateur qui délègue l'accès à une ressource protégée
+* resource server : Le serveur qui héberge la ressource protégée. 
+* client : Application qui requête la ressource protégée au nom de l'utilisateur final et avec son autorisation.
+* authorization server : Le serveur qui fournit les access-token à l'application client après avoir obtenu le consentement de l'utilisateur
+
 ### OAuth 2.0
 
 [https://tools.ietf.org/](https://tools.ietf.org/)
@@ -91,9 +99,7 @@ Le access-token ne fournit pas à l'application les information d'authentificati
 
 Au lieu d'utiliser les identifiants de l'utilisateur, le _client_ obtient un access-token. Ce access-token définit les _scopes_ i.e. le périmètre d'accès consenti par l'utilisateur. Le access-token a une durée de vie courte (minutes). Les access-token sont fournis par le _authorization server_ (_token issuer_) avec l'approbation de l'utilisateur final.
 
-![oauth2_authorization_code_grant](./doc/oauth2_authorization_code_grant.png?raw=true)
-
-#### OAuth découpe authentification et authorization
+#### OAuth découple authentification et autorisation
 
 [https://oauth.net/articles/authentication/](https://oauth.net/articles/authentication/)
 
@@ -105,40 +111,80 @@ Dans OAuth, le access-token n'est en fait pas destiné à l'application cliente.
 > generally going to be in a position to tell if the user is still present by the token alone, since by the very nature and 
 > design of the OAuth protocol the user will not be available on the connection between the client and protected resource"
 
-C'est le principe de OAuth : l'authentification est découplée de l'authorization. Au moment où l'application accède à 
+C'est le principe de OAuth : l'authentification est découplée de l'autorisation. Au moment où l'application accède à
 la _resource_, l'utilisateur propriétaire de la ressource n'intervient pas. Il a déjà préalablement donné son accord.
 
-### De OAuth 2.0 à OpenID Connect ?
+#### Authorization code flow
+
+
+Les access-token sont fournis par le _authorization server_ (_token issuer_) avec l'approbation de l'utilisateur final. Comment a lieu ce mécanisme d'approbation / consentement ?
+
+**Attention**
+
+[https://tools.ietf.org/html/rfc6749#section-1.3.1](https://tools.ietf.org/html/rfc6749#section-1.3.1)
+> Before directing the resource owner back to the client with the authorization code, the authorization server authenticates the resource owner and obtains authorization.  Because the resource owner only authenticates with the authorization server, the resource owner's credentials are never shared with the client.
+
+Le process OAuth 2.0 inclut une étape d'authentification : le _resource owner_ s'authentifie auprès du _authorization server_
+
+[https://oauth.net/articles/authentication/](https://oauth.net/articles/authentication/)
+> As an additional confounder to our topic, an OAuth process does usually include several kinds of authentication in its process: the resource owner authenticates to the authorization server in the authorization step, the client authenticates to the authorization server in the token endpoint, and there may be others. The existence of these authentication events within the OAuth protocol does not translate to the Oauth protocol itself being able to reliably convey authentication.
+
+![oauth2_authorization_code_grant](./doc/oauth2_authorization_code_grant.png?raw=true)
+
+#### PKCE enhanced authorization code flow
+
+https://auth0.com/docs/flows/authorization-code-flow-with-proof-key-for-code-exchange-pkce#how-it-works
+
+#### Les endpoints OAuth 2.0
+
+[https://tools.ietf.org/html/rfc6749#section-3](https://tools.ietf.org/html/rfc6749#section-3)
+
+Exposés par le _authorization server_ :
+* Authorization endpoint - Appelé par le _client_ pour obtenir un authorization code de la part du _resource owner_ via redirection
+* Token endpoint - Appelé par le _client_ pour échanger un authorization code contre un acess-token
+
+Exposé par le _client_ !
+* Redirection endpoint - Utilisé par le _authorization server_ pour transmettre le authorization code au _client_ via redirection
+
+#### Pour aller plus loin
+
+[https://developer.okta.com/blog/2017/06/21/what-the-heck-is-oauth](https://developer.okta.com/blog/2017/06/21/what-the-heck-is-oauth)
+
+
+### De OAuth 2.0 à OpenID Connect
+
+[https://openid.net/connect/](https://openid.net/connect/)
 
 On peut construire un protocole **d'authentification et d'identité** sur le protocole 
  OAuth 2.0 **d'authorisation et de délégation** [source](https://oauth.net/articles/authentication/)
 
-L'utlisateur va déléguer l'accès à une ressource particulière : son identité. L'application client va alors accéder à 
-la _resource_ identité (une API) pour ainsi découvrir **qui** en a autorisé l'accès à l'orgine.
+Une première idée est que l'utlisateur va déléguer l'accès à une ressource particulière : son identité. L'application client va alors accéder à la _resource_ identité (une API) pour ainsi découvrir **qui** en a autorisé l'accès à l'orgine.
 
-> As it turns out, though, there are a handful of things that can be used along with OAuth to create an authentication and identity 
-> protocol on top of this delegation and authorization protocol. In nearly all of these cases, the core functionality of OAuth 
-> remains intact, and what's happening is that the user is delegating access to their identity to the application they're trying to log in to. 
-> The client application then becomes a consumer of the identity API, thereby finding out who authorized the client in the first place. 
-> One major benefit of building authentication on top of authorization in this way is that it allows for management of end-user consent, 
-> which is very important in cross-domain identity federation at internet scale. Another important benefit is that the user can 
-> delegate access to other protected APIs along side their identity at the same time, making it much simpler for both application developers 
-> and end users to manage. With one call, an application can find out if a user is logged in, what the app should call the user, 
-> download photos for printing, and post updates to their message stream. 
+> As it turns out, though, there are a handful of things that can be used along with OAuth to create an authentication and identity protocol on top of this delegation and authorization protocol. In nearly all of these cases, the core functionality of OAuth remains intact, and what's happening is that the user is delegating access to their identity to the application they're trying to log in to. The client application then becomes a consumer of the identity API, thereby finding out who authorized the client in the first place. One major benefit of building authentication on top of authorization in this way is that it allows for management of end-user consent, which is very important in cross-domain identity federation at internet scale. Another important benefit is that the user can delegate access to other protected APIs along side their identity at the same time, making it much simpler for both application developers and end users to manage. With one call, an application can find out if a user is logged in, what the app should call the user, download photos for printing, and post updates to their message stream. 
 
 Cette _resource_ est fournie par le _identity provider_ (_authorization server_)
 
+Une deuxième idée est de transmettre un nouveau token en plus du access-token, avec les informations d'identité.
+
 > "OpenID Connect's ID Token provides a secondary token along side the access token that communicates the authentication information directly to the client."
 
-OpenID Connect est une extension de OAuth 2.0 [source](https://www.keycloak.org/docs/latest/securing_apps/index.html#overview)
 
-Sources [1](https://www.youtube.com/watch?v=6DxRTJN1Ffo) et [2](https://www.youtube.com/watch?v=WVCzv50BslE)...
+**Quel est l'apport de OIDC ?**
+On a besoin de OIDC parce-que, même si OAuth fournit la mécanique d'autorisations, il ne fournit pas la mécanique d'authentification. Avec OAuth, le user s'est authentifié et a prouvé qu'il était présent auprès du _authorization server_ mais le seul objectif de cette authentification était de générer un access-token pour l'application cliente. L'utilisateur ne s'authentifie pas directement auprès de l'application cliente. OAuth ne fournit pas l'information de quand, où et comment a eu lieu l'authentification.
+OIDC étend OAuth 2.0 pour permettre à l'application cliente d'obtenir les information d'identité, de récupére les détails relatifs à l'événement d'authentification
+
+### OpenID Connect
+
+OpenID Connect est une extension / une surcouche de OAuth 2.0 [source](https://www.keycloak.org/docs/latest/securing_apps/index.html#overview).
+OpenID Connect permet à une application cliente de vérifier l'identité d'un utilisateur, à partir de son authentification sur un _authorization server_
+
+Sources [1](https://www.youtube.com/watch?v=6DxRTJN1Ffo) et [2](https://www.youtube.com/watch?v=WVCzv50BslE)
  Avec OpenID Connect, les applications peuvent :
 * obtenir les informations d'identité
 * récupérer le détail de quand, où et comment a eu lieu l'événement d'authentification
 * utiliser du SSO fédéré.
 
-Le _End User_ OpenID Connect est le _resource owner_ OAuth 2.0. C'est l'utilisateur authentifié.
+Le _End User_ OpenID Connect est le _resource owner_ OAuth 2.0. C'est l'utilisateur authentifié. Et une des ressources qu'il possède est sa propre identité.
 
 Un _Relying Party_ OpenID Connect est un _client_ OAuth 2.0 qui dépend de l'_Identity Provider_ pour 
 * authentifier les utilisateurs
@@ -147,18 +193,55 @@ Un _Relying Party_ OpenID Connect est un _client_ OAuth 2.0 qui dépend de l'_Id
 Le _Identity Provider_ est un OAuth 2.0 _Authorization Server_ qui fournit de l'_Authentication As A Service_
 * garantit que l'utilisateur est authentifié
 * fournit les _claims_ à propos de cet utilisateur
-* fournit les information de l'événement d'authentification
-au _Relying Party_
+* fournit les information de l'événement d'authentification au _Relying Party_
 
+#### ID Token
+
+Comment est-ce que le _identity provider_ fournit au _relying party_ les informations du _end user_ ?
 Le _Identity Provider_ fournit toutes ces informations dans un ID Token.
-Le ID Token (carte d'identité ou passeport) contient un ensemble d'attributs relatifs à l'utilsateur : les _claims_
+Si le access-token est un badge d'hôtel ou une clé d'appartement, le id-token est plutôt une carte d'identité ou un passeport.
+Le ID Token contient un ensemble d'attributs relatifs à l'utilsateur : les _claims_.
 
-Exemples de _claims_ :
-* Subject
-* Issuing Authority
-* Audience
+[https://developer.okta.com/docs/concepts/oauth-openid/](https://developer.okta.com/docs/concepts/oauth-openid/)
+> A "claim" is a piece of information about the end user.
+
+_Claims_ requis :
+* Subject (identifiant unique de l'utilisateur pour l'IDP)
+* Issuing Authority (le IDP)
+* Audience (le _relying party_ qui peut utiliser ce token)
 * Issue date
 * Expiration Date
+
+_Claims_ optionnels :
+* email
+* name
+* family_name
+* ...
+
+#### Scopes
+
+Les scopes sont utilisés pour réclamer certains sous-ensembles de claims. Ces scopes sont des scopes OAuth. Ils sont définis par le standart OIDC.
+Lors de l'authentification initiale, l'application cliente passe les scopes auxquels elle veut avoir accès. Si l'utilisateur final consent à déléguer l'accès à ces scopes, alors le id-token contiendra les claims correspondants.
+
+_Scope_ requis :
+* openid. La présence de ce scope va déclencher l'envoi d'un id-token, et autoriser l'accès à la ressource /userinfo avec le access-token. Le id-token est retourné avec le access-token
+
+_Scopes_ optionnels :
+* profile : réclame l'accès aux _claims_ {name, family_name, given_name, middle_name, nickname, email, address, phone, gender, birthdate, profile, picture, website, zoneinfo, locale, updated_at}
+* email
+* address
+* phone
+
+[https://oauth.net/articles/authentication/](https://oauth.net/articles/authentication/)
+> After all, it's preferable to say "Good Morning, Jane Doe" instead of "Good Morning, 9XE3-JI34-00132A". OpenID Connect defines a set of standardized OAuth scopes that map to subsets of these attributes: profile, email, phone, and address, allowing plain OAuth authorization requests to carry the necessary information for a request.
+
+#### UserInfo Endpoint
+
+OIDC permet aussi à l'application d'obtenir les informations de l'utilisateur à travers une API REST, plus précisément avec la ressource /userinfo.
+Ce userinfo endpoint est une ressource protégée OAuth 2.0.
+Ce endpoint retourne les _claims_ ou "informations utilisateur" que l'utilisateur a consenti à partager / dont l'utilisateur a délégué l'accès au _relying party_
+
+> It should be noted that clients are not required to use the access token, since the ID Token contains all the necessary information for processing the authentication event. However, in order to provide compatibility with OAuth and match the general tendency for authorizing identity and other API access in parallel, OpenID Connect always issues the ID token along side an OAuth access token. In addition to the claims in the ID Token, OpenID Connect defines a standard protected resource that contains claims about the current user. 
 
 ### Notes Keycloak
 
